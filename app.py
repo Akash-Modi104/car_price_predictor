@@ -14,9 +14,11 @@ logging.basicConfig(filename=os.path.join(log_dir, 'running_logs.log'), level=lo
 
 app=Flask(__name__)
 cors=CORS(app)
+logging.info("<<<<<<<<start>>>>>>>>")
 model=pickle.load(open('LinearRegressionModel.pkl','rb'))
 car=pd.read_csv('cleaned.csv')
-
+logging.info("model loaded")
+logging.info("csv file loaded")
 @app.route('/',methods=['GET','POST'])
 def index():
     companies=sorted(car['company'].unique())
@@ -26,6 +28,7 @@ def index():
 
     companies.insert(0,'Select Company')
     return render_template('index.html',companies=companies, car_models=car_models, years=year,fuel_types=fuel_type)
+logging.info("renderded indexhtml file")
 
 
 @app.route('/predict',methods=['POST'])
@@ -42,8 +45,10 @@ def predict():
     prediction=model.predict(pd.DataFrame(columns=['name', 'company', 'year', 'kms_driven', 'fuel_type'],
                               data=np.array([car_model,company,year,driven,fuel_type]).reshape(1, 5)))
     print(prediction)
+    logging.info("prediction done")
 
     return str(np.round(prediction[0],2))
+logging.info("<<<<<<<<<end>>>>>>>>")
 
 
 
